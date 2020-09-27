@@ -18,6 +18,8 @@ __lua__
 * compose music for start / finish of round
 --]]
 
+-- testing adding a table as a way to categorize the player
+
 function _init()
 
 cls()
