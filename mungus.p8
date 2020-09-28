@@ -20,31 +20,67 @@ __lua__
 
 -- testing adding a table as a way to categorize the player
 
-function _init()
+crew = {} -- all characters
 
-cls()
-
--- players = 4
--- to be implemented later
-
-f = 1 -- animation frame
-d = -1 -- sprite flip value
-s = 1 -- sound cycle increment
+-- make dynamic when I am smarter
+killcd = 22.5
+players = 4
+title = 1 -- we are at the title screen
 walkfx = 1 -- sfx to be played
 
-title = 1 -- we are at the title screen
-
-x = 64 -- setting variables for
-y = 64 -- player location
-
--- print title screen 
-for i=1,6 do
-	spr(i+4,32+8*i,48)
+function generate_character(x, y)
+	a={
+		k = 1,
+		x = x,
+		y = y,
+		dx = 0,
+		dy = 0,
+		frame = 0,
+		t = 0,
+		friction = 0.15,
+		frames = 4,
+		palette = 1, -- how do i implement this dynamically while excluding the color the player chose?
+		alive = true,
+		impostor = false,
+		player = false,
+		cooldown = killcd,
+		-- allows characters to fit through 1 square gaps
+		w = 0.4, 
+		h = 0.4
+	}
+	
+	add(crew,a)
+	
+	return a 
 end
-print("press z to start",35,64)
-print("-thenoble1",88,123)
--- idle on title until z is pressed
-while (title == 1) do
+
+function _init()
+
+	-- make player
+	pl = generate_character(64,64)
+	pl.player = true
+	pl.impostor = true
+	pl.palette = 9
+	
+	-- make crewmembers
+	for i=0, 2 do
+		a = generate_character((i*5),(i*5))
+		a.palette=i
+	end
+
+	f = 1 -- animation frame
+	d = -1 -- sprite flip value
+	s = 1 -- sound cycle increment
+
+	-- print title screen MAKE THIS ITS OWN FUNCTION LATER
+	cls()
+	for i=1,6 do
+		spr(i+4,32+8*i,48)
+	end
+	print("press z to start",35,64)
+	print("-thenoble1",88,123)
+	-- idle on title until z is pressed
+	while (title == 1) do
  if (btn(4)) then
 	cls()
 	print("you are the ",24,52)
@@ -65,25 +101,26 @@ function _update()
 	elseif (s%18 == 10) then walkfx = 2
 	else walkfx = 0 end
 	-- movement loop
-	if (btn(0)) then	x-=1 f+=1 d=-1 sfx(walkfx) s += 1end
-	if (btn(1)) then x+=1 f+=1 d=1  sfx(walkfx) s += 1end
-	if (btn(2)) then y-=1 f+=1 sfx(walkfx) s += 1 end
-	if (btn(3)) then y+=1 f+=1 sfx(walkfx) s += 1 end
+	if (btn(0)) then pl.x-=1 d=-1 sfx(walkfx) s += 1 end
+	if (btn(1)) then pl.x+=1 d=1  sfx(walkfx) s += 1 end
+	if (btn(2)) then pl.y-=1 sfx(walkfx) s += 1 end
+	if (btn(3)) then pl.y+=1 sfx(walkfx) s += 1 end
 	if (btn()) == 0 then f = 1 end -- if no button is pressed reset to standing animation
 	-- reset walk animation and footstep sound cycles
 	if (f > 4) then f = 1 end
 	if (s > 18) then s = 1 end
 end
 
+function draw_character(a)
+	pal(9,a.palette)
+	spr(1, a.x, a.y)
+	pal()
+end
+
+
 function _draw()
 	cls(5)
-	pal() -- this is all hideous, I need to put each player / color into a table and
-	spr(f,x,y,1,1,d==-1) -- iterate through the sprite draw every time so I don't need to 
-	pal(9,3) -- manually set all of these sprite colors
-	spr(1,20,20)
-	pal()
-	pal(9,8)
-	spr(1,75,100)
+	foreach(crew,draw_character)
 end
 __gfx__
 00000000000000000000000000099900000999000000000007700000000000000000000000000000000000000000000000000000000000000000000000000000
