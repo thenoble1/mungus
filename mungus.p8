@@ -5,17 +5,17 @@ __lua__
 --by thenoble1
 
 --[[ todo:
-*** move character state to tables to be able to spawn & manage multiple crewmembers easily
-*** implement momentum based movement 
-** iterate animation frame based on momentum to decouple it from player character
-** implement manhattan distance from other players (abs x1-x0 + abs y1 - y0) to determine if they are in kill range
-** design dead body sprite
-* design killing / death animation
-* design map
-* design map tiles
-* implement map collision
-* compose sfx for killing / emergency meeting
-* compose music for start / finish of round
+***	implement momentum based movement 
+**	iterate animation frame based on momentum to decouple it from player character
+**	implement manhattan distance from other players (abs x1-x0 + abs y1 - y0) to determine if they are in kill range
+**	design dead body sprite
+*	Randomized impostor chance (toggleable)
+*	design killing / death animation
+*	design map
+*	design map tiles
+*	implement map collision
+*	compose sfx for killing / emergency meeting
+*	compose music for start / finish of round
 --]]
 
 -- testing adding a table as a way to categorize the player
