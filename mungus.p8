@@ -36,13 +36,14 @@ function generate_character(x, y)
 		dx = 0,
 		dy = 0,
 		frame = 0,
-		t = 0,
-		friction = 0.15,
 		frames = 4,
+		sfx = 0,
+		maxsfx = 2,
 		palette = 1, -- how do i implement this dynamically while excluding the color the player chose?
 		alive = true,
 		impostor = false,
 		player = false,
+		d = true,
 		cooldown = killcd,
 		-- allows characters to fit through 1 square gaps
 		w = 0.4, 
@@ -52,6 +53,41 @@ function generate_character(x, y)
 	add(crew,a)
 	
 	return a 
+end
+
+function draw_character(a)
+	pal(9,a.palette)
+	spr(a.k+a.frame, a.x, a.y, 1, 1, a.d)
+	pal()
+end
+
+function move_character(a)
+
+	ac=0.08
+	
+	if (a.player == true) then
+		if (btn(⬅️)) a.dx-= ac
+		if (btn(➡️)) a.dx+= ac
+		if (btn(⬆️)) a.dy-= ac
+		if (btn(⬇️)) a.dy+= ac
+	end
+	
+	-- move (add velocity)
+	a.x+=(a.dx*4) a.y+=(a.dy*4)
+	if (a.dx < 0) then
+		a.d = true
+	else
+		a.d = false
+	end
+	-- friction (lower for more)
+	a.dx *=.7
+	a.dy *=.7
+	
+	spd=sqrt(a.dx*a.dx+a.dy*a.dy)
+	if (spd > 0.1866) spd = 0.1866
+	a.frame= (a.frame+spd*2) % 4 -- 4 frames
+	if (spd < 0.05) a.frame=0
+
 end
 
 function _init()
@@ -96,6 +132,8 @@ end
 end
 
 function _update()
+--[[
+
 	-- choose whether to play step sound 1, 2, or nothing
 	if (s%18 == 1) then walkfx = 1
 	elseif (s%18 == 10) then walkfx = 2
@@ -109,18 +147,23 @@ function _update()
 	-- reset walk animation and footstep sound cycles
 	if (f > 4) then f = 1 end
 	if (s > 18) then s = 1 end
+--]]
+move_character(crew[1])
 end
-
-function draw_character(a)
-	pal(9,a.palette)
-	spr(1, a.x, a.y)
-	pal()
-end
-
 
 function _draw()
 	cls(5)
 	foreach(crew,draw_character)
+
+
+print(stat(32),0,0)
+print(stat(33),0,7)
+--[[ debug printouts
+print(stat(1),0,0) -- cpu usage
+print(stat(7),0,10) -- framerate
+print(crew[1].dx,0,20) -- x velocity
+print(crew[1].dy,0,30) -- y velocity
+--]] 
 end
 __gfx__
 00000000000000000000000000099900000999000000000007700000000000000000000000000000000000000000000000000000000000000000000000000000
